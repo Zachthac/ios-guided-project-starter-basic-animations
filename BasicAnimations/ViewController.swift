@@ -60,6 +60,12 @@ class ViewController: UIViewController {
         keyButton.addTarget(self, action: #selector(keyButtonTapped), for: .touchUpInside)
         keyButton.tintColor = .black
         
+        let squashButton = UIButton(type: .system)
+        squashButton.translatesAutoresizingMaskIntoConstraints = false
+        squashButton.setTitle("Squash", for: .normal)
+        squashButton.addTarget(self, action: #selector(squashButtonTapped), for: .touchUpInside)
+        squashButton.tintColor = .black
+        
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
         stackView.axis = .horizontal
@@ -69,6 +75,8 @@ class ViewController: UIViewController {
         stackView.addArrangedSubview(rotateButton)
         stackView.addArrangedSubview(springButton)
         stackView.addArrangedSubview(keyButton)
+        stackView.addArrangedSubview(squashButton)
+        
         NSLayoutConstraint.activate(
             [
                 stackView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
@@ -106,16 +114,55 @@ class ViewController: UIViewController {
         label.center = view.center
         
         UIView.animateKeyframes(withDuration: 3, delay: 0, options: [], animations: {
+            UIView.addKeyframe(withRelativeStartTime: 0, relativeDuration: 0.25) {
+                self.label.transform = CGAffineTransform(rotationAngle: .pi/4)
+            }
+            UIView.addKeyframe(withRelativeStartTime: 0.25, relativeDuration: 0.5) {
+                self.label.transform = CGAffineTransform(translationX: 0, y: -50)
+            }
+            UIView.addKeyframe(withRelativeStartTime: 0.75, relativeDuration: 0.25) {
+                self.label.transform = .identity
+            }
             
         }, completion: nil)
         
     }
     
     @objc private func squashButtonTapped() {
+        label.center = CGPoint(x: view.center.x, y: -label.bounds.size.height)
         
+        let animationBlock = {
+            //DROP
+            UIView.addKeyframe(withRelativeStartTime: 0, relativeDuration: 0.4) {
+                self.label.center = self.view.center
+            }
+            //SQUASH
+            UIView.addKeyframe(withRelativeStartTime: 0.3, relativeDuration: 0.2) {
+                self.label.transform = CGAffineTransform(scaleX: 1.7, y: 0.6)
+            }
+            //STRETCH
+            UIView.addKeyframe(withRelativeStartTime: 0.5, relativeDuration: 0.2) {
+                self.label.transform = CGAffineTransform(scaleX: 0.6, y: 1.7)
+            }
+            //RETURN STRETCH
+            UIView.addKeyframe(withRelativeStartTime: 0.7, relativeDuration: 0.15) {
+                self.label.transform = CGAffineTransform(translationX: 1.11, y: 0.9)
+            }
+            //FINISH
+            UIView.addKeyframe(withRelativeStartTime: 0.85, relativeDuration: 0.15) {
+                self.label.transform = .identity
+            }
+            
+        }
+        UIView.animateKeyframes(withDuration: 1.5,
+                       delay: 0,
+                       options: [],
+                       animations: animationBlock,
+                       completion: nil)
     }
-    
-    @objc private func anticipationButtonTapped() {
         
-    }
+            
+            @objc private func anticipationButtonTapped() {
+                
+            }
 }
